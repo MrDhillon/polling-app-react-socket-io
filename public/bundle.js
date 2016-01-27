@@ -19665,6 +19665,11 @@
 
 	var APP = _react2.default.createClass({
 		displayName: "APP",
+		getInitialState: function getInitialState() {
+			return {
+				status: 'disconnected'
+			};
+		},
 		componentWillMount: function componentWillMount() {
 			this.socket = io('http://localhost:3000');
 			// this referes to the instant of our app component
@@ -19672,13 +19677,13 @@
 		},
 		connect: function connect() {
 			console.log(this.socket.id);
-			alert("connected:" + this.socket.id);
+			this.setState({ status: 'connected' });
 		},
 		render: function render() {
 			return _react2.default.createElement(
 				"div",
 				null,
-				_react2.default.createElement(Header, { title: "New Header" })
+				_react2.default.createElement(Header, { title: "New Header", status: this.state.status })
 			);
 		}
 	});
@@ -27128,14 +27133,29 @@
 	  propTypes: {
 	    title: _react2.default.PropTypes.string.isRequired
 	  },
+
+	  getDefaultProps: function getDefaultProps() {
+	    return {
+	      status: 'disconnected'
+	    };
+	  },
 	  render: function render() {
 	    return _react2.default.createElement(
 	      "header",
-	      null,
+	      { className: "row" },
 	      _react2.default.createElement(
-	        "h1",
-	        null,
-	        this.props.title
+	        "div",
+	        { className: "col-xs-10" },
+	        _react2.default.createElement(
+	          "h1",
+	          null,
+	          this.props.title
+	        )
+	      ),
+	      _react2.default.createElement(
+	        "div",
+	        { className: "col-xs-2" },
+	        _react2.default.createElement("span", { id: "connection-status", className: this.props.status })
 	      )
 	    );
 	  }
