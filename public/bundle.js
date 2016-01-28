@@ -62,9 +62,9 @@
 
 	var APP = __webpack_require__(211);
 	var Audience = __webpack_require__(260);
-	var Speaker = __webpack_require__(262);
-	var Board = __webpack_require__(263);
-	var NoMatch = __webpack_require__(264);
+	var Speaker = __webpack_require__(263);
+	var Board = __webpack_require__(264);
+	var NoMatch = __webpack_require__(265);
 
 	_reactDom2.default.render(React.createElement(
 	  _reactRouter.Router,
@@ -31972,6 +31972,7 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var Display = __webpack_require__(261);
+	var Join = __webpack_require__(262);
 
 	var Audience = _react2.default.createClass({
 	  displayName: 'Audience',
@@ -31986,7 +31987,8 @@
 	          'p',
 	          null,
 	          'Join the session!'
-	        )
+	        ),
+	        _react2.default.createElement(Join, null)
 	      )
 	    );
 	  }
@@ -32025,6 +32027,46 @@
 
 	'use strict';
 
+	var _reactDom = __webpack_require__(1);
+
+	var React = __webpack_require__(150);
+
+	var Join = React.createClass({
+	  displayName: 'Join',
+	  join: function join() {
+	    var userName = (0, _reactDom.findDOMNode)(this.refs.name).value;
+	    console.log('this input name ' + userName);
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      'form',
+	      { action: 'javascript:void(0)', onSubmit: this.join },
+	      React.createElement(
+	        'label',
+	        null,
+	        'Full Name:'
+	      ),
+	      React.createElement('input', { ref: 'name',
+	        className: 'form-control',
+	        placeholder: 'enter name',
+	        required: true }),
+	      React.createElement(
+	        'button',
+	        { className: 'btn btn-primary' },
+	        'Join'
+	      )
+	    );
+	  }
+	});
+
+	module.exports = Join;
+
+/***/ },
+/* 263 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
 	var _react = __webpack_require__(150);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -32046,7 +32088,7 @@
 	module.exports = Speaker;
 
 /***/ },
-/* 263 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32071,7 +32113,7 @@
 	module.exports = Board;
 
 /***/ },
-/* 264 */
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
