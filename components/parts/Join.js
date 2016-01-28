@@ -4,7 +4,9 @@ import {findDOMNode} from 'react-dom';
 var Join = React.createClass({
   join(){
     var userName = findDOMNode(this.refs.name).value;
-    console.log(`this input name ${userName}`);
+    this.props.emit('join',{
+      name: userName
+    });
   },
   render(){
     return (

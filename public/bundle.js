@@ -24451,7 +24451,9 @@
 		getInitialState: function getInitialState() {
 			return {
 				status: 'disconnected',
-				title: ''
+				title: '',
+				member: {},
+				audience: []
 			};
 		},
 		componentWillMount: function componentWillMount() {
@@ -24460,9 +24462,20 @@
 			this.socket.on('connect', this.connect);
 			this.socket.on('disconnect', this.disconnect);
 			this.socket.on('welcome', this.welcome);
+			this.socket.on('joined', this.joined);
+			this.socket.on('audience', this.updateAudience);
+		},
+		emit: function emit(eventName, payload) {
+			this.socket.emit(eventName, payload);
 		},
 		connect: function connect() {
 			console.log(this.socket.id);
+			var member = sessionStorage.member ? JSON.parse(sessionStorage.member) : null;
+
+			if (member) {
+				this.emit('join', member);
+			}
+
 			this.setState({ status: 'connected' });
 		},
 		disconnect: function disconnect() {
@@ -24471,6 +24484,13 @@
 		welcome: function welcome(serverState) {
 			this.setState({ title: serverState.title });
 		},
+		joined: function joined(memberData) {
+			sessionStorage.member = JSON.stringify(memberData);
+			this.setState({ member: memberData });
+		},
+		updateAudience: function updateAudience(_updateAudience) {
+			this.setState({ audience: _updateAudience });
+		},
 		render: function render() {
 			return _react2.default.createElement(
 				"div",
@@ -24478,7 +24498,10 @@
 				_react2.default.createElement(_Header2.default, { title: this.state.title, status: this.state.status }),
 				_react2.default.cloneElement(this.props.children, {
 					title: this.state.title,
-					status: this.state.status
+					status: this.state.status,
+					member: this.state.member,
+					audience: this.state.audience,
+					emit: this.emit
 				})
 			);
 		}
@@ -31984,11 +32007,36 @@
 	        Display,
 	        { 'if': this.props.status === 'connected' },
 	        _react2.default.createElement(
-	          'p',
-	          null,
-	          'Join the session!'
+	          Display,
+	          { 'if': this.props.member.name },
+	          _react2.default.createElement(
+	            'h2',
+	            null,
+	            'Welcome ',
+	            this.props.member.name
+	          ),
+	          _react2.default.createElement(
+	            'p',
+	            null,
+	            'Audience members: ',
+	            this.props.audience.length
+	          ),
+	          _react2.default.createElement(
+	            'p',
+	            null,
+	            'Questions will appear here!'
+	          )
 	        ),
-	        _react2.default.createElement(Join, null)
+	        _react2.default.createElement(
+	          Display,
+	          { 'if': !this.props.member.name },
+	          _react2.default.createElement(
+	            'p',
+	            null,
+	            'Join the session!'
+	          ),
+	          _react2.default.createElement(Join, { emit: this.props.emit })
+	        )
 	      )
 	    );
 	  }
@@ -32035,7 +32083,9 @@
 	  displayName: 'Join',
 	  join: function join() {
 	    var userName = (0, _reactDom.findDOMNode)(this.refs.name).value;
-	    console.log('this input name ' + userName);
+	    this.props.emit('join', {
+	      name: userName
+	    });
 	  },
 	  render: function render() {
 	    return React.createElement(
