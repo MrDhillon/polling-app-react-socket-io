@@ -1,5 +1,6 @@
 var React = require('react');
 import {findDOMNode} from 'react-dom';
+import {Link} from 'react-router';
 
 var Join = React.createClass({
   join(){
@@ -17,6 +18,7 @@ var Join = React.createClass({
                 placeholder="enter name"
                 required />
         <button className='btn btn-primary'>Join</button>
+        <Link to="/speaker">Join as Speaker</Link>
       </form>
     );
   }

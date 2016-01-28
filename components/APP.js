@@ -54,11 +54,11 @@ var APP = React.createClass({
 			<div>
 				<Header title={this.state.title} status={this.state.status} />
 				{React.cloneElement(this.props.children,{
-				title: this.state.title,
-				status: this.state.status,
-				member: this.state.member,
-				audience: this.state.audience,
-				emit: this.emit
+					title: this.state.title,
+					status: this.state.status,
+					member: this.state.member,
+					audience: this.state.audience,
+					emit: this.emit
 				})}
 			</div>
 		);

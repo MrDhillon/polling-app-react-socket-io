@@ -31,7 +31,7 @@ io.sockets.on('connection',function(socket){
     var newMember = {
       // !!this!! refers to the socket that just emitted
       id: this.id,
-      name: payload.name
+      name: payload.name,
       type: 'member'
     }
     this.emit('joined',newMember);
@@ -45,7 +45,7 @@ io.sockets.on('connection',function(socket){
     speaker.id = this.id;
     speaker.type = 'speaker';
     this.emit('joined',speaker);
-    console.log("Presentation started: %s by %s", title, speaker.name);
+    console.log("Presentation started: %s by %s", payload.title, speaker.name);
   });
 
   socket.emit("welcome",{
