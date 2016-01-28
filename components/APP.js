@@ -11,7 +11,7 @@ var APP = React.createClass({
 			title : '',
 			member: {},
 			audience: [],
-			speaker: {}
+			speaker: ''
 		}
 	},
 	componentWillMount(){
@@ -19,9 +19,10 @@ var APP = React.createClass({
 		// this referes to the instant of our app component
 		this.socket.on('connect', this.connect);
 		this.socket.on('disconnect', this.disconnect);
-		this.socket.on('welcome', this.welcome);
+		this.socket.on('welcome', this.updateState);
 		this.socket.on('joined',this.joined);
 		this.socket.on('audience',this.updateAudience);
+		this.socket.on('start',this.updateState);
 	},
 	emit(eventName,payload){
 		this.socket.emit(eventName,payload);
@@ -39,8 +40,8 @@ var APP = React.createClass({
 	disconnect(){
 		this.setState({status: 'disconnected'});
 	},
-	welcome(serverState){
-		this.setState({title: serverState.title});
+	updateState(serverState){
+		this.setState(serverState);
 	},
 	joined(memberData){
 		sessionStorage.member = JSON.stringify(memberData);
@@ -52,13 +53,14 @@ var APP = React.createClass({
 	render() {
 		return (
 			<div>
-				<Header title={this.state.title} status={this.state.status} />
+				<Header {...this.state} />
 				{React.cloneElement(this.props.children,{
 					title: this.state.title,
 					status: this.state.status,
 					member: this.state.member,
 					audience: this.state.audience,
-					emit: this.emit
+					emit: this.emit,
+					speaker: this.state.speaker
 				})}
 			</div>
 		);

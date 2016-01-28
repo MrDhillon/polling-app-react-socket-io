@@ -24454,7 +24454,7 @@
 				title: '',
 				member: {},
 				audience: [],
-				speaker: {}
+				speaker: ''
 			};
 		},
 		componentWillMount: function componentWillMount() {
@@ -24462,9 +24462,10 @@
 			// this referes to the instant of our app component
 			this.socket.on('connect', this.connect);
 			this.socket.on('disconnect', this.disconnect);
-			this.socket.on('welcome', this.welcome);
+			this.socket.on('welcome', this.updateState);
 			this.socket.on('joined', this.joined);
 			this.socket.on('audience', this.updateAudience);
+			this.socket.on('start', this.updateState);
 		},
 		emit: function emit(eventName, payload) {
 			this.socket.emit(eventName, payload);
@@ -24482,8 +24483,8 @@
 		disconnect: function disconnect() {
 			this.setState({ status: 'disconnected' });
 		},
-		welcome: function welcome(serverState) {
-			this.setState({ title: serverState.title });
+		updateState: function updateState(serverState) {
+			this.setState(serverState);
 		},
 		joined: function joined(memberData) {
 			sessionStorage.member = JSON.stringify(memberData);
@@ -24496,13 +24497,14 @@
 			return _react2.default.createElement(
 				"div",
 				null,
-				_react2.default.createElement(_Header2.default, { title: this.state.title, status: this.state.status }),
+				_react2.default.createElement(_Header2.default, this.state),
 				_react2.default.cloneElement(this.props.children, {
 					title: this.state.title,
 					status: this.state.status,
 					member: this.state.member,
 					audience: this.state.audience,
-					emit: this.emit
+					emit: this.emit,
+					speaker: this.state.speaker
 				})
 			);
 		}
@@ -31970,6 +31972,11 @@
 	          "h1",
 	          null,
 	          this.props.title
+	        ),
+	        _react2.default.createElement(
+	          "p",
+	          null,
+	          this.props.speaker
 	        )
 	      ),
 	      _react2.default.createElement(
@@ -32206,7 +32213,7 @@
 	      ),
 	      React.createElement('input', { ref: 'name',
 	        className: 'form-control',
-	        placeholder: 'enter name',
+	        placeholder: 'Enter your name',
 	        required: true }),
 	      React.createElement(
 	        'label',
@@ -32215,7 +32222,7 @@
 	      ),
 	      React.createElement('input', { ref: 'title',
 	        className: 'form-control',
-	        placeholder: 'enter presentation title',
+	        placeholder: 'Enter presentation title',
 	        required: true }),
 	      React.createElement(
 	        'button',
