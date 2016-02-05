@@ -22,7 +22,8 @@ var APP = React.createClass({
 		this.socket.on('welcome', this.updateState);
 		this.socket.on('joined',this.joined);
 		this.socket.on('audience',this.updateAudience);
-		this.socket.on('start',this.updateState);
+		this.socket.on('start',this.start);
+		this.socket.on('end',this.updateState);
 	},
 	emit(eventName,payload){
 		this.socket.emit(eventName,payload);
@@ -31,14 +32,23 @@ var APP = React.createClass({
 		console.log(this.socket.id);
 		var member = (sessionStorage.member) ? JSON.parse(sessionStorage.member) : null;
 
-		if(member){
+		if(member && member.type === 'audience'){
 			this.emit('join',member)
+		} else if (member && member.type === 'speaker') {
+			this.emit('start',{
+				name: member.name,
+				title: sessionStorage.title
+			});
 		}
 
 		this.setState({status: 'connected'});
 	},
 	disconnect(){
-		this.setState({status: 'disconnected'});
+		this.setState({
+			status: 'disconnected',
+			title: 'disconnected',
+			speaker: ''
+		});
 	},
 	updateState(serverState){
 		this.setState(serverState);
@@ -49,6 +59,12 @@ var APP = React.createClass({
 	},
 	updateAudience(updateAudience){
 		this.setState({audience: updateAudience});
+	},
+	start(presentationInfo){
+		if (this.state.member.type === 'speaker'){
+			sessionStorage.title = presentationInfo.title;
+		}
+		this.setState(presentationInfo);
 	},
 	render() {
 		return (

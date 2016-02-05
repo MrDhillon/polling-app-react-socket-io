@@ -24465,7 +24465,8 @@
 			this.socket.on('welcome', this.updateState);
 			this.socket.on('joined', this.joined);
 			this.socket.on('audience', this.updateAudience);
-			this.socket.on('start', this.updateState);
+			this.socket.on('start', this.start);
+			this.socket.on('end', this.updateState);
 		},
 		emit: function emit(eventName, payload) {
 			this.socket.emit(eventName, payload);
@@ -24474,14 +24475,23 @@
 			console.log(this.socket.id);
 			var member = sessionStorage.member ? JSON.parse(sessionStorage.member) : null;
 
-			if (member) {
+			if (member && member.type === 'audience') {
 				this.emit('join', member);
+			} else if (member && member.type === 'speaker') {
+				this.emit('start', {
+					name: member.name,
+					title: sessionStorage.title
+				});
 			}
 
 			this.setState({ status: 'connected' });
 		},
 		disconnect: function disconnect() {
-			this.setState({ status: 'disconnected' });
+			this.setState({
+				status: 'disconnected',
+				title: 'disconnected',
+				speaker: ''
+			});
 		},
 		updateState: function updateState(serverState) {
 			this.setState(serverState);
@@ -24492,6 +24502,12 @@
 		},
 		updateAudience: function updateAudience(_updateAudience) {
 			this.setState({ audience: _updateAudience });
+		},
+		start: function start(presentationInfo) {
+			if (this.state.member.type === 'speaker') {
+				sessionStorage.title = presentationInfo.title;
+			}
+			this.setState(presentationInfo);
 		},
 		render: function render() {
 			return _react2.default.createElement(
