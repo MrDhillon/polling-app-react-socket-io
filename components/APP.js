@@ -11,7 +11,9 @@ var APP = React.createClass({
 			title : '',
 			member: {},
 			audience: [],
-			speaker: ''
+			speaker: '',
+			questions: [],
+			currentQuestion: false
 		}
 	},
 	componentWillMount(){
@@ -24,6 +26,7 @@ var APP = React.createClass({
 		this.socket.on('audience',this.updateAudience);
 		this.socket.on('start',this.start);
 		this.socket.on('end',this.updateState);
+		this.socket.on('ask',this.ask);
 	},
 	emit(eventName,payload){
 		this.socket.emit(eventName,payload);
@@ -66,17 +69,22 @@ var APP = React.createClass({
 		}
 		this.setState(presentationInfo);
 	},
+	ask(question){
+		this.setState({currentQuestion: question});
+	},
 	render() {
 		return (
 			<div>
 				<Header {...this.state} />
 				{React.cloneElement(this.props.children,{
-					title: this.state.title,
-					status: this.state.status,
-					member: this.state.member,
-					audience: this.state.audience,
-					emit: this.emit,
-					speaker: this.state.speaker
+				title: this.state.title,
+				status: this.state.status,
+				member: this.state.member,
+				audience: this.state.audience,
+				emit: this.emit,
+				speaker: this.state.speaker,
+				questions: this.state.questions,
+				currentQuestion: this.state.currentQuestion
 				})}
 			</div>
 		);
